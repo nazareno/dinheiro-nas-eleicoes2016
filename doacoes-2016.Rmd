@@ -11,6 +11,8 @@ output:
 ---
 
 ```{r setup, include=FALSE}
+knitr::opts_chunk$set(screenshot.force = FALSE, echo = FALSE, warning = FALSE) 
+library(DT)
 source("doacoes.R")
 
 #receitas = le_receitas("dados/receitas_candidatos_parcial_2016_brasil.txt")
@@ -36,46 +38,86 @@ receitas_daqui$`Tipo receita` = factor(receitas_daqui$`Tipo receita`,
 
 ```
 
+<br> 
+
+## De onde vem?
+
 Esse é o primeiro ano em que doações de empresas estão proibidas nas campanhas eleitorais. Isso criou a necessidade de muitos candidatos reinventarem a arrecadação de suas campanhas. De onde está vindo o dinheiro? 
 
 Algumas campanhas -- a exemplo da de Marcelo Freixo no RJ -- estão apostando nas doações de pessoa física pela Internet. Todas podem ainda receber repasses dos partidos, que por sua vez recebem dinheiro do governo através do fundo partidário. Ou mesmo recursos da fortuna do próprio candidato. 
 
-Quais candidaturas são construídas sobre quais tipos de dinheiro? 
+**Que candidaturas são construídas sobre que tipo de dinheiro?**
 
-## Campina Grande - PB 
+<br>
 
-Começando na cidade em que moro, resolvi ver os dados que o TSE disponibiliza 
+## em Campina Grande - PB 
 
-```{r, echo = FALSE}
-receitas_daqui %>% 
-    plota_cidade_dimple("CAMPINA GRANDE")
+Começando na cidade em que moro, resolvi ver nos dados que o TSE disponibiliza qual a origem do arrecadado por cada candidato a prefeito. Até 24-09-2016, eis a origem da verba de cada candidato: 
 
-receitas_daqui %>% 
-    plota_cidade_dimple("CAMPINA GRANDE") %>% 
+```{r, echo = FALSE, warning=FALSE}
+r = receitas_daqui %>% 
+    filter(`Nome da UE` == "CAMPINA GRANDE") %>% 
+    rowwise() %>% 
+    mutate(`Nome candidato` = switch (`Nome candidato`,
+                                      "ADRIANO CEZAR GALDINO DE ARAÚJO" = "Adriano Galdino", 
+                                      "JOSÉ ARTUR MELO DE ALMEIDA" = "Artur Bolinha", 
+                                      "ROMERO RODRIGUES VEIGA" = "Romero", 
+                                      "VENEZIANO VITAL DO REGO SEGUNDO NETO" = "Veneziano", 
+                                      `Nome candidato`))
+
+r %>% 
+    plota_cidade_dimple("CAMPINA GRANDE", desloca_x = 100) 
+
+```
+
+Uma primeira coisa que salta aos olhos é que **Veneziano declarou ter arrecadado o dobro do segundo candidato que mais arrecadou**. 
+
+Além disso, essa diferença acontece principalmente porque *Veneziano doou mais de R$ 400 mil à própria campanha*. Uma das maiores doações inclusive é **um depósito de R$ 169 mil em espécie**. Essa é uma doação bem notável: é a maior auto-doação na PB, é mais que o dobro da segunda na PB, só há uma doação de recursos próprios maior que essa em todas as campanhas de Pernambuco, e há apenas uma doação em espécie maior que essa no Nordeste -- em Caxias, no Maranhão.
+
+Voltando o foco a Campina Grande, constatamos que **aqui todos os candidatos investem muito dinheiro próprio na eleição**.  Eis os dez maiores doadores com recursos próprios da Paraíba, e repare que quatro dos cinco maiores são em Campina Grande: 
+
+```{r}
+receitas %>% 
+    filter(`Tipo receita` == "Recursos próprios", UF == "PB") %>% 
+    rename("Cidade" = `Nome da UE`) %>% 
+    group_by(`Nome do doador`, `Nome candidato`, Cidade) %>% 
+    summarise(Doado = sum(`Valor receita`)) %>% 
+    arrange(-Doado) %>% 
+    ungroup() %>% 
+    slice(1:10) %>%
+    datatable(options = list(paging = F, info = F, search = F), rownames = FALSE)
+```
+
+<br> 
+
+Olhando de onde a maior parte da verba de cada candidato veio, percebemos que a candidatura de Romero tem a maior parte de sua verba vinda diretamenteo do PSDB. Veneziano também recebeu um grande repasse do PMDB, enquanto Adriano e Bolinha não declararam ter recebido verba de seus partidos: 
+
+```{r}
+r %>% 
+    plota_cidade_dimple("CAMPINA GRANDE", desloca_x = 100) %>% 
     rcdimple::xAxis(type = "addPctAxis")
-
 ```
 
-## João Pessoa
+Em contrapartida, Adriano e Bolinha são os candidatos cujas campanhas aparentemente estão mais financiadas por pessoas físicas. Curiosamente, contudo, apenas 3 pessoas realmente doaram verba para Adriano, e 4 para Artur Bolinha. O restante do recurso arrecadado foi todo na forma de serviços e bens cedidos para a campanha.
+
+<!-- ## João Pessoa -->
 ```{r, echo = FALSE}
-receitas_daqui %>% 
-    plota_cidade_dimple("JOÃO PESSOA")
+#receitas_daqui %>% 
+#    plota_cidade_dimple("JOÃO PESSOA")
 ```
 
-## Rio de Janeiro
+<!-- ## Rio de Janeiro -->
 
 ```{r, echo = FALSE}
-receitas_daqui %>% 
-    plota_cidade_dimple("RIO DE JANEIRO")
+#receitas_daqui %>% 
+#    plota_cidade_dimple("RIO DE JANEIRO")
 ```
 
-
-
-## São Paulo
+<!-- ## São Paulo -->
 
 ```{r, echo = FALSE}
-receitas_daqui %>% 
-    plota_cidade_dimple("SÃO PAULO")
+#receitas_daqui %>% 
+ #   plota_cidade_dimple("SÃO PAULO")
 ```
 
 
