@@ -1,0 +1,82 @@
+---
+title: "O dinheiro das campanhas para prefeito"
+author: "Nazareno Andrade"
+date: "24 de setembro de 2016"
+output: 
+  html_document:
+    theme: readable
+    fig_width: 7
+    toc: true
+    toc_float: true
+---
+
+```{r setup, include=FALSE}
+source("doacoes.R")
+
+#receitas = le_receitas("dados/receitas_candidatos_parcial_2016_brasil.txt")
+#receitas %>% filter(Cargo == "Prefeito") %>%  write_csv("dados/receitas_prefeitaveis_parcial_2016.csv")
+
+receitas = readr::read_csv("dados/receitas_prefeitaveis_parcial_2016.csv")
+
+receitas_daqui = receitas %>% 
+    filter(`Nome da UE` %in% c("CAMPINA GRANDE", 
+                               "RIO DE JANEIRO", 
+                               "JOÃO PESSOA", 
+                               "SÃO PAULO"), 
+           Cargo == "Prefeito") 
+
+receitas_daqui$`Tipo receita` = factor(receitas_daqui$`Tipo receita`, 
+                                          levels = c("Recursos de partido político", 
+                                                     "Recursos de pessoas físicas", 
+                                                     "Recursos próprios", 
+                                                     "Recursos de outros candidatos", 
+                                                     "Doações pela Internet", 
+                                                     "Recursos de origens não identificadas"), 
+                                          ordered = TRUE)
+
+```
+
+Esse é o primeiro ano em que doações de empresas estão proibidas nas campanhas eleitorais. Isso criou a necessidade de muitos candidatos reinventarem a arrecadação de suas campanhas. De onde está vindo o dinheiro? 
+
+Algumas campanhas -- a exemplo da de Marcelo Freixo no RJ -- estão apostando nas doações de pessoa física pela Internet. Todas podem ainda receber repasses dos partidos, que por sua vez recebem dinheiro do governo através do fundo partidário. Ou mesmo recursos da fortuna do próprio candidato. 
+
+Quais candidaturas são construídas sobre quais tipos de dinheiro? 
+
+## Campina Grande - PB 
+
+Começando na cidade em que moro, resolvi ver os dados que o TSE disponibiliza 
+
+```{r, echo = FALSE}
+receitas_daqui %>% 
+    plota_cidade_dimple("CAMPINA GRANDE")
+
+receitas_daqui %>% 
+    plota_cidade_dimple("CAMPINA GRANDE") %>% 
+    rcdimple::xAxis(type = "addPctAxis")
+
+```
+
+## João Pessoa
+```{r, echo = FALSE}
+receitas_daqui %>% 
+    plota_cidade_dimple("JOÃO PESSOA")
+```
+
+## Rio de Janeiro
+
+```{r, echo = FALSE}
+receitas_daqui %>% 
+    plota_cidade_dimple("RIO DE JANEIRO")
+```
+
+
+
+## São Paulo
+
+```{r, echo = FALSE}
+receitas_daqui %>% 
+    plota_cidade_dimple("SÃO PAULO")
+```
+
+
+
