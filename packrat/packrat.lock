@@ -13,6 +13,12 @@ Source: CRAN
 Version: 0.5-1
 Hash: 375869004db963f9915f2b8a49b4a718
 
+Package: DT
+Source: CRAN
+Version: 0.2
+Hash: 36b032203797956fedad5a25055016a9
+Requires: htmltools, htmlwidgets, magrittr
+
 Package: R6
 Source: CRAN
 Version: 2.1.3
@@ -37,6 +43,17 @@ Package: base64enc
 Source: CRAN
 Version: 0.1-3
 Hash: c590d29e555926af053055e23ee79efb
+
+Package: bitops
+Source: CRAN
+Version: 1.0-6
+Hash: 67d0775189fd0041d95abca618c5c07e
+
+Package: caTools
+Source: CRAN
+Version: 1.17.1
+Hash: 97cb6f6293cd18d17df77a6383cc6763
+Requires: bitops
 
 Package: colorspace
 Source: CRAN
@@ -71,6 +88,17 @@ Version: 0.5.0
 Hash: 03e5e71801c0f49217922e2cd4680f06
 Requires: BH, DBI, R6, Rcpp, assertthat, lazyeval, magrittr, tibble
 
+Package: evaluate
+Source: CRAN
+Version: 0.9
+Hash: cf338d73ba4ee3a4fefec612cdfd38db
+Requires: stringr
+
+Package: formatR
+Source: CRAN
+Version: 1.4
+Hash: b2a47a2b91737978cf50ba95825a9cd1
+
 Package: ggplot2
 Source: CRAN
 Version: 2.1.0
@@ -98,6 +126,11 @@ Source: CRAN
 Version: 1.27.1
 Hash: 9f94c576cc4b9e83fd714ae8387272e6
 
+Package: highr
+Source: CRAN
+Version: 0.6
+Hash: aa3d5b7912b5fed4b546ed5cd2a1760b
+
 Package: hms
 Source: CRAN
 Version: 0.2
@@ -115,6 +148,12 @@ Version: 0.7
 Hash: f60506850a2d752dff69fc2a31c5a339
 Requires: htmltools, jsonlite, yaml
 
+Package: httpuv
+Source: CRAN
+Version: 1.3.3
+Hash: 12c4ec43e5609293576e368c740c1f84
+Requires: Rcpp
+
 Package: httr
 Source: CRAN
 Version: 1.2.1
@@ -125,6 +164,12 @@ Package: jsonlite
 Source: CRAN
 Version: 1.1
 Hash: 86d4b85b84421a4815f1bb4872e30ef4
+
+Package: knitr
+Source: CRAN
+Version: 1.14
+Hash: e7b411f5a5512295a260a45683fa0c4a
+Requires: digest, evaluate, formatR, highr, markdown, stringr, yaml
 
 Package: labeling
 Source: CRAN
@@ -141,9 +186,16 @@ Source: CRAN
 Version: 1.5
 Hash: bdc4d48c3135e8f3b399536ddf160df4
 
+Package: markdown
+Source: CRAN
+Version: 0.7.7
+Hash: fea2343a1119d61b0cc5c0a950d103a3
+Requires: mime
+
 Package: memoise
 Source: CRAN
 Version: 1.0.0
+Hash: 56e7087c3559eb7ba72a9afb349bf896
 Requires: digest
 
 Package: mime
@@ -186,6 +238,16 @@ Version: 0.2.0
 Hash: 5e26f9b9c15839dff80ec79f05e9986b
 Requires: htmltools, htmlwidgets
 
+Package: rcdimple
+Source: github
+Version: 0.1
+Hash: b55cef47508e1d7877db632f92e576df
+Requires: htmltools, htmlwidgets
+GithubRepo: rcdimple
+GithubUsername: timelyportfolio
+GithubRef: master
+GithubSha1: 03db0b197fd71cbad66ffd58f92eeeaa5e89023a
+
 Package: readr
 Source: CRAN
 Version: 1.0.0
@@ -198,6 +260,13 @@ Version: 1.4.1
 Hash: c9a8d2349fe969cf519dd0ced9cc1414
 Requires: Rcpp, plyr, stringr
 
+Package: rmarkdown
+Source: CRAN
+Version: 1.0
+Hash: 7c60cd30594b34874a6a7e729f0a6fad
+Requires: base64enc, caTools, evaluate, htmltools, jsonlite, knitr,
+    yaml
+
 Package: rstudioapi
 Source: CRAN
 Version: 0.6
@@ -208,6 +277,18 @@ Source: CRAN
 Version: 0.4.0
 Hash: c4a91e7a322e03813b68b73940ce031f
 Requires: RColorBrewer, Rcpp, dichromat, labeling, munsell, plyr
+
+Package: shiny
+Source: CRAN
+Version: 0.14
+Hash: 695d82a6a0bc88b7fe693c968450f9ca
+Requires: R6, digest, htmltools, httpuv, jsonlite, mime, sourcetools,
+    xtable
+
+Package: sourcetools
+Source: CRAN
+Version: 0.1.5
+Hash: 04ddeb1c288302222562326a471e2945
 
 Package: stringi
 Source: CRAN
@@ -247,6 +328,11 @@ Package: withr
 Source: CRAN
 Version: 1.0.2
 Hash: 774eb7be9087cdc24b53b74e5359cfac
+
+Package: xtable
+Source: CRAN
+Version: 1.8-2
+Hash: 7293235cfcc14cdff1ce7fd1a0212031
 
 Package: yaml
 Source: CRAN
