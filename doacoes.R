@@ -30,7 +30,7 @@ plota_cidade_ggplot = function(as_receitas, a_cidade, o_cargo = "Prefeito"){
         return()
 }
 
-plota_cidade_dimple = function(as_receitas, a_cidade, o_cargo = "Prefeito", desloca_x = 200){
+plota_cidade_dimple = function(as_receitas, a_cidade, o_cargo = "Prefeito", desloca_x = 100){
     r = as_receitas %>% 
         filter(`Nome da UE` == a_cidade, Cargo == o_cargo) %>% 
         group_by(`Nome candidato`, `Tipo receita`) %>% 
