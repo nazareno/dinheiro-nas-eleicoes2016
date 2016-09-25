@@ -51,7 +51,7 @@ plota_cidade_dimple = function(as_receitas, a_cidade, o_cargo = "Prefeito", desl
         xAxis(type = "addMeasureAxis") %>%
         yAxis(type = "addCategoryAxis") %>%
         add_legend(
-            x = "60%", width = "30%", y = "10%", height = 100 
+            x = "70%", width = "30%", y = "10%", height = 100 
         ) %>% 
         return()
 }

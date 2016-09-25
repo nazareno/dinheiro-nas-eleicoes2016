@@ -178,19 +178,28 @@ pfsbr = receitas %>%
 ```
 
 
-<!-- ## Rio de Janeiro -->
+## no Rio de Janeiro
 
-```{r, echo = FALSE}
-#receitas_daqui %>% 
-#    plota_cidade_dimple("RIO DE JANEIRO")
+Uma das modalidades de arrecadação este ano é com doações via internet. Nessa modalidade, o eleitor doa diretamente para seu candidato, de casa. O Rio de Janeiro é a única cidade onde esta forma de participação do eleitor parece ter dado certo. E apenas na campanha de Marcelo Freixo; 
+
+```{r}
+receitas %>% 
+    filter(`Tipo receita` == "Doações pela Internet") %>% 
+    group_by(`Nome candidato`, UF) %>% 
+    summarise(n = n(), `Total (R$)` = sum(`Valor receita`)) %>% 
+    ungroup() %>% 
+    arrange(-n) %>% 
+    slice(1:10) %>% 
+    rename("Doações recebidas via Internet" = n) %>% 
+    datatable(options = list(paging = F, info = F, search = F), rownames = FALSE)
 ```
 
-<!-- ## São Paulo -->
+<br> 
+
+A composição da receita de campanha dos demais candidatos é novamente bastante diferente de Campina Grande. Tem algumas semelhanças com João Pessoa. De maneira geral os candidatos não investem tanto em suas campanhas, e dependem de partidos. O líder nas pesquisas, Crivella, praticamente não recebeu verbas de pessoas físicas. A campanha de Marcelo Freixo é composta em quase metade de verbas de pessoas físicas, principalmente pela Internet.
 
 ```{r, echo = FALSE}
-#receitas_daqui %>% 
- #   plota_cidade_dimple("SÃO PAULO")
+receitas %>% 
+    plota_cidade_dimple("RIO DE JANEIRO", desloca_x = 200)
 ```
-
-
 
