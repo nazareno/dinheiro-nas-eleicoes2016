@@ -1,7 +1,7 @@
 ---
 title: "O dinheiro das campanhas para prefeito"
 author: "Nazareno Andrade"
-date: "24 de setembro de 2016"
+date: "26 de setembro de 2016"
 output: 
   html_document:
     theme: readable
@@ -16,9 +16,6 @@ library(DT)
 library(plotly)
 source("doacoes.R")
 theme_set(theme_bw())
-
-#receitas = le_receitas("dados/receitas_candidatos_parcial_2016_brasil.txt")
-#receitas %>% filter(Cargo == "Prefeito") %>%  write_csv("dados/receitas_prefeitaveis_parcial_2016.csv")
 
 receitas = readr::read_csv("dados/receitas_prefeitaveis_parcial_2016.csv")
 
@@ -54,7 +51,7 @@ Algumas campanhas -- a exemplo da de Marcelo Freixo no RJ -- estão apostando na
 
 ## em Campina Grande - PB 
 
-Começando na cidade em que moro, resolvi ver nos dados que o TSE disponibiliza qual a origem do arrecadado por cada candidato a prefeito. Até 24-09-2016, eis a origem da verba de cada candidato: 
+Começando na cidade em que moro, resolvi ver nos dados que o TSE disponibiliza qual a origem do arrecadado por cada candidato a prefeito. Até 25-09-2016, eis a origem da verba de cada candidato: 
 
 ```{r, echo = FALSE, warning=FALSE}
 r = receitas_daqui %>% 
@@ -77,7 +74,7 @@ Uma primeira coisa que salta aos olhos é que **Veneziano declarou ter arrecadad
 
 Além disso, essa diferença acontece principalmente porque *Veneziano doou mais de R$ 400 mil à própria campanha*. Uma das maiores doações inclusive é **um depósito de R$ 169 mil em espécie**. Essa é uma doação bem notável: é a maior auto-doação na PB, é mais que o dobro da segunda na PB, só há uma doação de recursos próprios maior que essa em todas as campanhas de Pernambuco, e há apenas uma doação em espécie maior que essa no Nordeste -- em Caxias, no Maranhão.
 
-Voltando o foco a Campina Grande, constatamos que **aqui todos os candidatos investem muito dinheiro próprio na eleição**.  Eis os dez maiores doadores com recursos próprios da Paraíba, e repare que quatro dos cinco maiores são em Campina Grande: 
+Voltando o foco a Campina Grande, constatamos que **aqui todos os candidatos investem muito dinheiro próprio na eleição**.  Eis os dez maiores doadores com recursos próprios da Paraíba, e repare que quatro dos dez maiores são em Campina Grande: 
 
 ```{r}
 receitas %>% 
@@ -93,6 +90,21 @@ receitas %>%
 
 <br> 
 
+```{r}
+# Pessoas físicas
+# receitas %>% 
+#     filter(`Nome da UE` == "CAMPINA GRANDE", 
+#            `Tipo receita` == "Recursos de pessoas físicas", 
+#            Cargo == "Prefeito", 
+#            `Especie recurso` != "Estimado") %>% 
+#     select(-11:-1) %>% 
+#     group_by(`Nome candidato`, `Nome do doador`, `Especie recurso`) %>% 
+#     summarise(Recebido = sum(`Valor receita`))  %>% 
+#     ungroup() %>% 
+#     View()
+```
+
+
 Olhando de onde a maior parte da verba de cada candidato veio, percebemos que a candidatura de Romero tem a maior parte de sua verba vinda diretamenteo do PSDB. Veneziano também recebeu um grande repasse do PMDB, enquanto Adriano e Bolinha não declararam ter recebido verba de seus partidos: 
 
 ```{r}
@@ -101,7 +113,7 @@ r %>%
     rcdimple::xAxis(type = "addPctAxis")
 ```
 
-Em contrapartida, Adriano e Bolinha são os candidatos cujas campanhas aparentemente estão mais financiadas por pessoas físicas. Curiosamente, contudo, apenas 3 pessoas realmente doaram verba para Adriano, e 4 para Artur Bolinha. O restante do recurso arrecadado foi todo na forma de serviços e bens cedidos para a campanha.
+Em contrapartida, Adriano e Bolinha são os candidatos cujas campanhas aparentemente estão mais financiadas por pessoas físicas. Curiosamente, contudo, apenas 7 pessoas realmente doaram verba para Artur Bolinha, enquanto 27 doaram para Adriano. O restante do recurso arrecadado foi todo na forma de serviços e bens cedidos para a campanha.
 
 <br>
 
@@ -119,13 +131,14 @@ r = receitas_daqui %>%
                                       "LUCIANO CARTAXO PIRES DE SÁ" = "Luciano Cartaxo", 
                                       "CHARLITON JOSE DOS SANTOS MACHADO" = "Prof Charliton", 
                                       "MARIA APARECIDA RAMOS DE MENESES" = "Cida Ramos", 
+                                      "VICTOR HUGO PEREIRA DO NASCIMENTO" = "Victor Hugo",
                                       `Nome candidato`))
 
 r %>% 
     plota_cidade_dimple("JOÃO PESSOA")
 ```
 
-Primeiro, apenas um dos candidatos declarou ter usado recursos próprios: Luciano Cartaxo. E mesmo assim, ele doou apenas R$ 20 mil em verba. *Quatro vezes menos do que quem menos doou a si próprio em Campina Grande*.
+Primeiro, apenas um dos candidatos declarou ter usado recursos próprios: Luciano Cartaxo. E mesmo assim, ele doou apenas R$ 20 mil em verba. *Quatro vezes menos do que quem menos doou a si próprio em Campina Grande*. O restante do recurso próprio na realidade é de Manoel Júnior, e em serviços.
 
 Para dois dos candidatos, os partidos são também responsáveis pela maior parte da verba nas campanhas. Diferente de Campina Grande, o PSB é responsável por uma enorme parte da receita de Cida Ramos, e o PT por toda a verba declarada por Prof. Charliton. 
 
@@ -140,7 +153,10 @@ pfs = r %>%
            `Especie recurso` != "Estimado") %>% 
     select(-11:-1) %>% 
     group_by(`Nome candidato`, `Nome do doador`, `Especie recurso`) %>% 
-    summarise(Recebido = sum(`Valor receita`)) 
+    summarise(Recebido = sum(`Valor receita`))  %>% 
+    ungroup() %>% 
+    rename(Doador = `Nome do doador`) %>% 
+    mutate(Quanto = paste0(Doador, " doou R$", Recebido))
 
 pfs_e = r %>% 
     ungroup() %>% 
@@ -152,23 +168,23 @@ pfs_e = r %>%
     distinct() %>% 
     ungroup() %>% 
     dplyr::count(`Nome candidato`)
+    
 
 p = pfs %>% 
-    ungroup() %>% 
-    rename(Doador = `Nome do doador`) %>% 
     ggplot(aes(x = `Nome candidato`, 
                y = Recebido, colour = `Nome candidato`, 
-               label = Doador)) + 
+               label = Quanto)) + 
     geom_point(position = position_jitter(width = .2), alpha = 0.5, size = 2.5) + 
+    scale_y_log10() + 
     labs(x = "", y = "Doação", title = "Doações de verba de pessoa física") + 
     theme(legend.position = "none")
 
-ggplotly(p, tooltip = c("y", "label"))
+ggplotly(p, tooltip = c("label"))
 ```
 
 <br> 
 
-O número de doações recebidas dos dois candidatos não é muito diferente. Mas há uma diferença perceptível nos valores. **Luciano Cartaxo tem vários doadores que contribuíram entre R$10 mil e R$15 mil para a sua campanha**, enquanto a campanha de Cida é feita de doações menores. A doação média das pessoas físicas na campanha de Cartaxo é hoje R$6.500,00; na de Cida, pouco menos de R$2.000,00.
+Cida recebeu doações de mais pessoas. Porém há uma diferença perceptível nos valores na outra direção. **Luciano Cartaxo tem um bom número de doadores que contribuíram mais de R$10 mil para a sua campanha**, enquanto a campanha de Cida é feita de doações menores. A doação média das pessoas físicas na campanha de Cartaxo é hoje R$8.900,00; na de Cida, pouco menos de R$2.400,00.
 
 Não conhecemos todos que doaram para os candidatos, mas dois nomes dentre os que doaram bastante para Cartaxo saltam aos olhos: **Daniella Bandeira e Socorro Gadelha são secretárias da prefeitura de João Pessoa e doaram R$15 mil para a campanha de Cartaxo**. 
 
@@ -190,7 +206,7 @@ pfsbr = receitas %>%
 
 ## no Rio de Janeiro
 
-Uma das modalidades de arrecadação este ano é com doações via internet. Nessa modalidade, o eleitor doa diretamente para seu candidato, de casa. O Rio de Janeiro é a única cidade onde esta forma de participação do eleitor parece ter dado certo. E apenas na campanha de Marcelo Freixo. Esses são os candidatos (em todo o país) a prefeito que mais receberam doações por internet:
+Uma das modalidades de arrecadação este ano é com doações via internet. Nessa modalidade, o eleitor doa diretamente para seu candidato, de casa. O Rio de Janeiro é a única cidade onde esta forma de participação do eleitor parece ter realmente dado certo. E apenas na campanha de Marcelo Freixo. Em São Paulo, Haddad conseguiu algumas centenas de doadores, mas bem menos que Freixo. Esses são os candidatos (em todo o país) a prefeito que mais receberam doações por internet:
 
 ```{r}
 receitas %>% 
@@ -221,7 +237,7 @@ r %>%
 
 <br> 
 
-Vendo proporcionalmente, fica ainda mais claro como alguns candidatos não tiveram apoio financeiro de pessoas físicas. Toda a verba de Flávio Bolsonaro, e quase toda a verba de Crivella e Índio da Costa vieram de seus partidos. 
+Vendo proporcionalmente, fica ainda mais claro como alguns candidatos não tiveram apoio financeiro de pessoas físicas. Toda a verba de Flávio Bolsonaro, e quase toda a verba de Crivella vieram de seus partidos. 
 
 ```{r}
 r %>% 
