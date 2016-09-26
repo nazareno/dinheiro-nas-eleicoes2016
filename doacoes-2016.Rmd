@@ -170,6 +170,8 @@ ggplotly(p, tooltip = c("y", "label"))
 
 O número de doações recebidas dos dois candidatos não é muito diferente. Mas há uma diferença perceptível nos valores. **Luciano Cartaxo tem vários doadores que contribuíram entre R$10 mil e R$15 mil para a sua campanha**, enquanto a campanha de Cida é feita de doações menores. A doação média das pessoas físicas na campanha de Cartaxo é hoje R$6.500,00; na de Cida, pouco menos de R$2.000,00.
 
+Não conhecemos todos que doaram para os candidatos, mas dois nomes dentre os que doaram bastante para Cartaxo saltam aos olhos: **Daniella Bandeira e Socorro Gadelha são secretárias da prefeitura de João Pessoa e doaram R$15 mil para a campanha de Cartaxo**. 
+
 ```{r pfs_br}
 pfsbr = receitas %>% 
     filter(`Tipo receita` == "Recursos de pessoas físicas", 
@@ -224,5 +226,32 @@ Vendo proporcionalmente, fica ainda mais claro como alguns candidatos não tiver
 ```{r}
 r %>% 
     plota_cidade_dimple("RIO DE JANEIRO", desloca_x = 220, desloca_y = 80) %>% 
+    rcdimple::xAxis(type = "addPctAxis") 
+```
+
+
+
+----
+
+## em Recife - PE
+
+*(Adicionado 25/9 21:30)*
+
+Atendendo a pedidos...
+
+```{r, echo = FALSE}
+r = receitas %>% # reduzir o número de candidatos para economizar espaço 
+    filter(`Nome da UE` == "RECIFE" & 
+               !(`Nome candidato` %in% c("CARMEN PIRES MIGUELES", "CYRO GARCIA")))
+    
+r %>% 
+    plota_cidade_dimple("RECIFE", desloca_x = 220)
+```
+
+<br> 
+
+```{r}
+r %>% 
+    plota_cidade_dimple("RECIFE", desloca_x = 220, desloca_y = 80) %>% 
     rcdimple::xAxis(type = "addPctAxis") 
 ```
