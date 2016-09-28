@@ -5,10 +5,10 @@ library(rcdimple)
 le_receitas = function(arquivo){
     require(readr)
     readr::read_csv2(arquivo, 
-                                readr::locale(encoding = "Latin1"), 
-                                col_names = TRUE, 
-                                col_types = NULL) %>% 
-    return()
+                     readr::locale(encoding = "Latin1"), 
+                     col_names = TRUE, 
+                     col_types = NULL) %>% 
+        return()
 }
 
 capwords <- function(s, strict = FALSE) {
@@ -30,12 +30,25 @@ plota_cidade_ggplot = function(as_receitas, a_cidade, o_cargo = "Prefeito"){
         return()
 }
 
-plota_cidade_dimple = function(as_receitas, a_cidade, o_cargo = "Prefeito", desloca_x = 100, desloca_y = 30){
+plota_cidade_dimple = function(as_receitas, 
+                               categorias = 
+                                   c("Serviços/bens próprios"                          ,
+                                     "Verba própria"                                   ,
+                                     "Serviços/bens de partido político"               ,
+                                     "Verba de partido político"                       ,
+                                     "Serviços/bens de pessoas físicas"                ,
+                                     "Verba de pessoas físicas"                        ,
+                                     "Serviços/bens de outros candidatos"              ,
+                                     "Verba de outros candidatos"                      ,
+                                     "Doações pela Internet"                           ,
+                                     "Comercialização de bens ou realização de eventos",
+                                     "Recursos de origens não identificadas"           ,
+                                     "Rendimentos de aplicações financeiras"), 
+                               desloca_x = 100, desloca_y = 30){
     r = as_receitas %>% 
-        filter(`Nome da UE` == a_cidade, Cargo == o_cargo) %>% 
-        group_by(`Nome candidato`, `Tipo receita`) %>% 
+        group_by(`Nome na urna`, `Tipo receita`) %>% 
         summarise(Recebido = sum(`Valor receita`)) %>%
-        rename(Candidato = `Nome candidato`, Tipo = `Tipo receita`)
+        rename(Candidato = `Nome na urna`, Tipo = `Tipo receita`)
     dimple(
         Candidato ~ Recebido,
         groups = "Tipo",
@@ -51,7 +64,16 @@ plota_cidade_dimple = function(as_receitas, a_cidade, o_cargo = "Prefeito", desl
         xAxis(type = "addMeasureAxis") %>%
         yAxis(type = "addCategoryAxis") %>%
         add_legend(
-            x = "70%", width = "30%", y = "10%", height = 100 
+            x = "70%", width = "30%", y = "10%", height = 150 
+        ) %>% 
+        default_colors(
+            htmlwidgets::JS(
+                sprintf(
+                    'd3.scale.category10().range(%s).domain(%s)'
+                    ,jsonlite::toJSON(RColorBrewer::brewer.pal(12,"Set3"), auto_unbox=T)
+                    ,jsonlite::toJSON(categorias, auto_unbox=T)
+                )
+            )
         ) %>% 
         return()
 }
