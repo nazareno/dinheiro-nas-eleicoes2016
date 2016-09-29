@@ -66,16 +66,6 @@ Source: CRAN
 Version: 1.0-6
 Hash: 67d0775189fd0041d95abca618c5c07e
 
-Package: bubbleCloud
-Source: github
-Version: 1.0
-Hash: 50db33089b6e09e277cf0dce62e756e6
-Requires: htmltools, htmlwidgets, plyr
-GithubRepo: bubbleCloud
-GithubUsername: jpmarindiaz
-GithubRef: master
-GithubSha1: 9747838ee6e6cced0d8f20f7d1487d6cfe82e96a
-
 Package: caTools
 Source: CRAN
 Version: 1.17.1
@@ -274,12 +264,6 @@ Source: CRAN
 Version: 1.8.4
 Hash: 75ca080b10a9314a9b293964331e5df7
 Requires: Rcpp
-
-Package: radarchart
-Source: CRAN
-Version: 0.2.0
-Hash: 5e26f9b9c15839dff80ec79f05e9986b
-Requires: htmltools, htmlwidgets
 
 Package: rcdimple
 Source: github
