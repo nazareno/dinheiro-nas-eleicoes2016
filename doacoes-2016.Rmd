@@ -23,17 +23,7 @@ receitas_daqui = receitas %>%
     filter(`Nome da UE` %in% c("CAMPINA GRANDE", 
                                "RIO DE JANEIRO", 
                                "JOÃO PESSOA", 
-                               "SÃO PAULO"), 
-           Cargo == "Prefeito") 
-
-receitas_daqui$`Tipo receita` = factor(receitas_daqui$`Tipo receita`, 
-                                          levels = c("Recursos de partido político", 
-                                                     "Recursos de pessoas físicas", 
-                                                     "Recursos próprios", 
-                                                     "Recursos de outros candidatos", 
-                                                     "Doações pela Internet", 
-                                                     "Recursos de origens não identificadas"), 
-                                          ordered = TRUE)
+                               "SÃO PAULO")) 
 
 ```
 
@@ -55,18 +45,10 @@ Começando na cidade em que moro, resolvi ver nos dados que o TSE disponibiliza 
 
 ```{r, echo = FALSE, warning=FALSE}
 r = receitas_daqui %>% 
-    filter(`Nome da UE` == "CAMPINA GRANDE") %>% 
-    rowwise() %>% 
-    mutate(`Nome candidato` = switch (`Nome candidato`,
-                                      "ADRIANO CEZAR GALDINO DE ARAÚJO" = "Adriano Galdino", 
-                                      "JOSÉ ARTUR MELO DE ALMEIDA" = "Artur Bolinha", 
-                                      "ROMERO RODRIGUES VEIGA" = "Romero", 
-                                      "VENEZIANO VITAL DO REGO SEGUNDO NETO" = "Veneziano", 
-                                      `Nome candidato`))
+    filter(`Nome da UE` == "CAMPINA GRANDE") 
 
 r %>% 
-    plota_cidade_dimple("CAMPINA GRANDE", desloca_x = 100) 
-
+    plota_cidade_dimple(desloca_x = 100) 
 #receitas %>% filter(`Nome da UE` == "JOÃO PESSOA", `Tipo receita` == "Recursos próprios") %>% select(-11:-1) %>% group_by(`Nome candidato`, `Nome do doador`, `Fonte recurso`) %>% summarise(x = sum(`Valor receita`)) %>% View()
 ```
 
@@ -78,9 +60,9 @@ Voltando o foco a Campina Grande, constatamos que **aqui todos os candidatos inv
 
 ```{r}
 receitas %>% 
-    filter(`Tipo receita` == "Recursos próprios", UF == "PB") %>% 
+    filter(`Tipo receita` == "Verba própria", UF == "PB") %>% 
     rename("Cidade" = `Nome da UE`) %>% 
-    group_by(`Nome do doador`, `Nome candidato`, Cidade) %>% 
+    group_by(`Nome do doador`, `Nome na urna`, Cidade) %>% 
     summarise(Doado = sum(`Valor receita`)) %>% 
     arrange(-Doado) %>% 
     ungroup() %>% 
@@ -109,7 +91,7 @@ Olhando de onde a maior parte da verba de cada candidato veio, percebemos que a 
 
 ```{r}
 r %>% 
-    plota_cidade_dimple("CAMPINA GRANDE", desloca_x = 100) %>% 
+    plota_cidade_dimple(desloca_x = 100) %>% 
     rcdimple::xAxis(type = "addPctAxis")
 ```
 
@@ -125,17 +107,9 @@ Em João Pessoa, apenas três candidatos já relataram sua arrecadação para o 
 
 ```{r, echo = FALSE}
 r = receitas_daqui %>% 
-    filter(`Nome da UE` == "JOÃO PESSOA") %>% 
-    rowwise() %>% 
-    mutate(`Nome candidato` = switch (`Nome candidato`,
-                                      "LUCIANO CARTAXO PIRES DE SÁ" = "Luciano Cartaxo", 
-                                      "CHARLITON JOSE DOS SANTOS MACHADO" = "Prof Charliton", 
-                                      "MARIA APARECIDA RAMOS DE MENESES" = "Cida Ramos", 
-                                      "VICTOR HUGO PEREIRA DO NASCIMENTO" = "Victor Hugo",
-                                      `Nome candidato`))
-
+    filter(`Nome da UE` == "JOÃO PESSOA") 
 r %>% 
-    plota_cidade_dimple("JOÃO PESSOA")
+    plota_cidade_dimple()
 ```
 
 Primeiro, apenas um dos candidatos declarou ter usado recursos próprios: Luciano Cartaxo. E mesmo assim, ele doou apenas R$ 20 mil em verba. *Quatro vezes menos do que quem menos doou a si próprio em Campina Grande*. O restante do recurso próprio na realidade é de Manoel Júnior, e em serviços.
@@ -149,33 +123,33 @@ Como pessoas físicas podem doar em dinheiro ou serviços, separamos os dois e o
 ```{r fig.width=6, fig.height=4}
 pfs = r %>% 
     filter(`Nome da UE` == "JOÃO PESSOA", 
-           `Tipo receita` == "Recursos de pessoas físicas", 
-           `Especie recurso` != "Estimado") %>% 
-    select(-11:-1) %>% 
-    group_by(`Nome candidato`, `Nome do doador`, `Especie recurso`) %>% 
+           `Tipo receita` == "Verba de pessoas físicas") %>% 
+    group_by(`Nome na urna`, `Nome do doador`, `Especie recurso`) %>% 
     summarise(Recebido = sum(`Valor receita`))  %>% 
     ungroup() %>% 
     rename(Doador = `Nome do doador`) %>% 
     mutate(Quanto = paste0(Doador, " doou R$", Recebido))
 
-pfs_e = r %>% 
-    ungroup() %>% 
-    filter(`Nome da UE` == "JOÃO PESSOA", 
-           `Tipo receita` == "Recursos de pessoas físicas", 
-           `Especie recurso` == "Estimado") %>% 
-    select(-11:-1) %>% 
-    group_by(`Nome candidato`, `Nome do doador`, `Especie recurso`) %>% 
-    distinct() %>% 
-    ungroup() %>% 
-    dplyr::count(`Nome candidato`)
-    
-
+library(scales)
 p = pfs %>% 
-    ggplot(aes(x = `Nome candidato`, 
-               y = Recebido, colour = `Nome candidato`, 
+    ggplot(aes(x = `Nome na urna`, 
+               y = Recebido, colour = `Nome na urna`, 
                label = Quanto)) + 
     geom_point(position = position_jitter(width = .2), alpha = 0.5, size = 2.5) + 
-    scale_y_log10() + 
+    scale_y_log10(
+        # limits = c(5, 2e5),
+        labels = function(x, ...) {
+            paste("R$",
+                format(
+                    x,
+                    ...,
+                    big.mark = ".",
+                    scientific = FALSE,
+                    trim = TRUE
+                    )
+                )
+        }
+    ) +
     labs(x = "", y = "Doação", title = "Doações de verba de pessoa física") + 
     theme(legend.position = "none")
 
@@ -190,8 +164,7 @@ Não conhecemos todos que doaram para os candidatos, mas dois nomes dentre os qu
 
 ```{r pfs_br}
 pfsbr = receitas %>% 
-    filter(`Tipo receita` == "Recursos de pessoas físicas", 
-           `Especie recurso` != "Estimado", UF == "PB") %>% 
+    filter(`Tipo receita` == "Verba de pessoas físicas", UF == "PB") %>% 
     group_by(`Nome da UE`, `Nome candidato`, `Nome do doador`) %>% 
     summarise(Recebido = sum(`Valor receita`)) %>% 
     summarise(Medio = mean(Recebido), 
@@ -228,11 +201,10 @@ De maneira geral os candidatos não investem tanto em suas campanhas, e dependem
 
 ```{r, echo = FALSE}
 r = receitas %>% # reduzir o número de candidatos para economizar espaço 
-    filter(`Nome da UE` == "RIO DE JANEIRO" & 
-               !(`Nome candidato` %in% c("CARMEN PIRES MIGUELES", "CYRO GARCIA")))
+    filter(`Nome da UE` == "RIO DE JANEIRO")
     
 r %>% 
-    plota_cidade_dimple("RIO DE JANEIRO", desloca_x = 220)
+    plota_cidade_dimple(desloca_x = 220)
 ```
 
 <br> 
@@ -241,7 +213,7 @@ Vendo proporcionalmente, fica ainda mais claro como alguns candidatos não tiver
 
 ```{r}
 r %>% 
-    plota_cidade_dimple("RIO DE JANEIRO", desloca_x = 220, desloca_y = 80) %>% 
+    plota_cidade_dimple(desloca_x = 220, desloca_y = 80) %>% 
     rcdimple::xAxis(type = "addPctAxis") 
 ```
 
@@ -261,13 +233,13 @@ r = receitas %>% # reduzir o número de candidatos para economizar espaço
                !(`Nome candidato` %in% c("CARMEN PIRES MIGUELES", "CYRO GARCIA")))
     
 r %>% 
-    plota_cidade_dimple("RECIFE", desloca_x = 220)
+    plota_cidade_dimple(desloca_x = 220)
 ```
 
 <br> 
 
 ```{r}
 r %>% 
-    plota_cidade_dimple("RECIFE", desloca_x = 220, desloca_y = 80) %>% 
+    plota_cidade_dimple(desloca_x = 220, desloca_y = 80) %>% 
     rcdimple::xAxis(type = "addPctAxis") 
 ```
